@@ -1,0 +1,32 @@
+# frontend
+/frontend/node_modules/
+/internal/api/web/
+
+# compiled binaries
+/rekam
+/rekam.exe
+/dist/
+
+# SQLite files
+*.sqlite
+*.memory
+
+# generated env
+.env
+.env.*
+
+# Go test artifacts
+*.test
+*.out
+
+# wrangler local state
+.wrangler/
+
+# visual tests
+/tests/visual/node_modules/
+/tests/visual/results/
+/tests/visual/.rundata/
+/tests/visual/.devdata/
+/tests/visual/package-lock.json
+/tests/visual/marketing/.capturedata/
+/tests/visual/marketing/.raw/

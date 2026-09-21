@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The frontend must be built first: internal/api/web is gitignored and the
+      # binary embeds it via `//go:embed all:web`, so Go won't compile without it.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build Solo frontend (populates the embedded web assets)
+        working-directory: frontend
+        run: |
+          npm ci
+          REKAM_EDITION=solo npm run build
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Vet, test and build Solo
+        run: |
+          go vet -tags solo ./...
+          go test -tags solo ./... -race
+          go build -tags solo ./cmd/rekam

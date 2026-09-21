@@ -1,0 +1,408 @@
+@import 'modern-normalize';
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   rekam — the catalog of records
+   Editorial / paper-and-ink design system. Memories are catalog records;
+   the dot-notation taxonomy is their classification (call-number).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Theme system
+   ───────────────────────────────────────────────────────────────────────────
+   A theme is a handful of SEED tokens: the paper, the ink, the accent, a
+   couple of signal colors. Everything a component actually reaches for —
+   hovers, washes, borders, the sidebar's own shades, every status/state
+   pair — is DERIVED from those seeds by color-mix(), written once below and
+   shared by every theme. No component or canvas draw call ever names a raw
+   color; they all reach through these tokens, so adding a theme never means
+   touching component code.
+
+   To add a theme: copy a seed block, give it its own [data-theme="<name>"]
+   selector, retune the ~16 seed values, and add it to THEMES in lib/store.js
+   so the picker offers it. That's the whole cost.
+
+   'light' is the bare :root default — the one case that needs no JS and no
+   data-theme attribute, since it's what a browser paints before anything
+   else runs. 'dark' follows the OS via prefers-color-scheme, or wins
+   outright as an explicit choice via [data-theme="dark"] (what the sidebar
+   picker sets, persisted so it survives a reload before this stylesheet
+   would otherwise guess wrong).
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --sidebar-w: 248px;
+  --detail-w: 420px;
+  --toolbar-h: 56px;
+
+  /* ── Type — fixed across every theme; only color is themeable ────────────── */
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font: 'Newsreader Variable', Georgia, 'Times New Roman', serif;     /* body + UI */
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ── Structure — fixed across every theme ─────────────────────────────────── */
+  --radius: 3px;
+  --radius-md: 6px;
+  --transition: 150ms ease;
+
+  /* ── Seeds: light — warm bone paper, near-black ink ───────────────────────── */
+  --bg: #f6f2e9;           /* the page */
+  --bg-subtle: #efe9db;    /* recessed paper — code blocks, insets */
+  --bg-raised: #fdfbf5;    /* lifted card / modal */
+  --text: #23201a;         /* the ink */
+  --sidebar-bg: #efeadd;   /* the manila drawer */
+  --accent: #2e4a78;       /* fountain-pen ink blue */
+  --accent-hover: #24395e;
+  --accent-text: #fbf8f1;  /* text set on --accent */
+  --stamp: #a8443a;        /* destructive / reject only */
+  --stamp-hover: #8f372f;
+  --success: #3f9d5a;
+  --warning: #c8881f;
+  --shadow-sm: 0 1px 2px rgba(60,48,28,.07);
+  --shadow-md: 0 8px 28px rgba(60,48,28,.12);
+  --shadow-lg: 0 20px 56px rgba(50,40,20,.18);
+  --overlay: rgba(40,34,22,.42);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #1c1a15; --bg-subtle: #242019; --bg-raised: #27231a; --text: #ece5d3; --sidebar-bg: #17150f; --accent: #7fa0d9; --accent-hover: #97b3e2; --accent-text: #12182a; --stamp: #dd8073; --stamp-hover: #e6968a; --success: #6cbf74; --warning: #d9a94a; --shadow-sm: 0 1px 2px rgba(0,0,0,.35); --shadow-md: 0 8px 28px rgba(0,0,0,.45); --shadow-lg: 0 20px 56px rgba(0,0,0,.55); --overlay: rgba(0,0,0,.6); color-scheme: dark; }
+}
+:root[data-theme="dark"] {
+  /* ── Seeds: dark — kraft paper under lamplight, parchment ink ─────────────── */
+  --bg: #1c1a15;
+  --bg-subtle: #242019;
+  --bg-raised: #27231a;
+  --text: #ece5d3;
+  --sidebar-bg: #17150f;
+  --accent: #7fa0d9;
+  --accent-hover: #97b3e2;
+  --accent-text: #12182a;
+  --stamp: #dd8073;
+  --stamp-hover: #e6968a;
+  --success: #6cbf74;
+  --warning: #d9a94a;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.35);
+  --shadow-md: 0 8px 28px rgba(0,0,0,.45);
+  --shadow-lg: 0 20px 56px rgba(0,0,0,.55);
+  --overlay: rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+
+:root[data-theme="malleable"] {
+  /* ── Seeds: malleable — lifted from the Omarchy theme of the same name
+       (~/.config/omarchy/themes/malleable/colors.toml): cool brushed-steel
+       dark with a cyan accent, instead of this app's own warm kraft. Proof
+       the token system carries a genuinely different palette, not just a
+       second shade of paper. ───────────────────────────────────────────── */
+  --bg: #0a0c0f;
+  --bg-subtle: #050506;
+  --bg-raised: #1c1f24;
+  --text: #d8dee5;
+  --sidebar-bg: #020203;
+  --accent: #7fd4e0;
+  --accent-hover: #a0eaf5;
+  --accent-text: #0a0c0f;
+  --stamp: #e0666f;
+  --stamp-hover: #f08a92;
+  --success: #8fd9b6;
+  --warning: #e8c468;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-md: 0 8px 28px rgba(0,0,0,.5);
+  --shadow-lg: 0 20px 56px rgba(0,0,0,.6);
+  --overlay: rgba(0,0,0,.65);
+  color-scheme: dark;
+}
+
+/* ── Derived — one formula per token, shared by every theme above ──────────── */
+:root {
+  --text-2: color-mix(in srgb, var(--text) 70%, var(--bg));   /* muted ink */
+  --text-3: color-mix(in srgb, var(--text) 45%, var(--bg));   /* faint ink — meta */
+
+  --bg-hover: color-mix(in srgb, var(--text) 6%, var(--bg));  /* row hover */
+  --accent-wash: color-mix(in srgb, var(--accent) 14%, var(--bg));
+
+  --border: color-mix(in srgb, var(--text) 8%, var(--bg));    /* hairline ledger rule */
+  --border-mid: color-mix(in srgb, var(--text) 17%, var(--bg));
+  --border-focus: var(--accent);
+
+  --sidebar-border: color-mix(in srgb, var(--text) 9%, var(--sidebar-bg));
+  --sidebar-text: color-mix(in srgb, var(--text) 45%, var(--sidebar-bg));
+  --sidebar-text-active: var(--text);
+  --sidebar-hover: color-mix(in srgb, var(--text) 6%, var(--sidebar-bg));
+  --sidebar-active: var(--accent-wash);
+  --sidebar-active-border: var(--accent);
+
+  --status-pending-bg: color-mix(in srgb, var(--warning) 18%, var(--bg));   --status-pending-text: var(--warning);
+  --status-approved-bg: color-mix(in srgb, var(--success) 15%, var(--bg));  --status-approved-text: var(--success);
+  --status-rejected-bg: color-mix(in srgb, var(--stamp) 15%, var(--bg));    --status-rejected-text: var(--stamp);
+  --status-archived-bg: color-mix(in srgb, var(--text) 8%, var(--bg));      --status-archived-text: var(--text-3);
+
+  --state-open-bg: var(--accent-wash);                                       --state-open-text: var(--accent);
+  --state-resolved-bg: color-mix(in srgb, var(--success) 15%, var(--bg));   --state-resolved-text: var(--success);
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #app { height: 100%; margin: 0; }
+
+body {
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 420;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga" 1, "kern" 1;
+}
+
+/* The eyebrow / call-number / label voice — the ledger device */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ── Scrollbars ────────────────────────────────────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-mid) transparent;
+}
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+::selection { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+/* ── Utilities ─────────────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ── Badges ────────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.badge--pending  { background: var(--status-pending-bg);  color: var(--status-pending-text); }
+.badge--approved { background: var(--status-approved-bg); color: var(--status-approved-text); }
+.badge--rejected { background: var(--status-rejected-bg); color: var(--status-rejected-text); }
+.badge--archived { background: var(--status-archived-bg); color: var(--status-archived-text); }
+.badge--open     { background: var(--state-open-bg);      color: var(--state-open-text); }
+.badge--resolved { background: var(--state-resolved-bg);  color: var(--state-resolved-text); }
+
+/* ── Buttons ───────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 16px;
+  background: var(--accent);
+  color: var(--accent-text);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 560;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+  white-space: nowrap;
+}
+.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-primary:disabled { opacity: .42; cursor: not-allowed; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--text-3); background: var(--bg-hover); }
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+  flex-shrink: 0;
+}
+.btn-icon:hover { color: var(--text); background: var(--bg-hover); }
+.btn-icon svg { width: 15px; height: 15px; }
+
+.btn-sm {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  font-family: var(--font);
+  font-size: 13px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-mid);
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.btn-sm:hover { color: var(--text); border-color: var(--text-3); }
+.btn-approve { color: var(--status-approved-text) !important; border-color: #c3d2b8 !important; }
+.btn-approve:hover { background: var(--status-approved-bg) !important; }
+.btn-reject  { color: var(--stamp) !important; border-color: #e2c2bb !important; }
+.btn-reject:hover  { background: var(--status-rejected-bg) !important; }
+.btn-archive { color: var(--text-2) !important; }
+
+.btn-full { width: 100%; justify-content: center; }
+
+/* ── Form elements ─────────────────────────────────────────────────────────── */
+input[type="text"],
+input[type="search"],
+input[type="password"],
+textarea,
+select {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  padding: 8px 11px;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  width: 100%;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-wash);
+}
+input::placeholder, textarea::placeholder { color: var(--text-3); }
+select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239a9183'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+
+/* Taxonomy / code-style inputs read as call-numbers */
+input[list], .input-mono { font-family: var(--font-mono); font-size: 13px; }
+
+/* ── Modal ─────────────────────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+.modal {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.modal--sm { max-width: 380px; }
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+.modal__header h2 { margin: 0; font-family: var(--font-display); font-size: 19px; font-weight: 540; letter-spacing: -.01em; }
+.modal__body { padding: 22px; flex: 1; overflow-y: auto; }
+.modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 22px;
+  border-top: 1px solid var(--border);
+}
+
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-group label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.form-row--2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.form-row--2 .form-group { margin-bottom: 0; }
+.required { color: var(--stamp); }
+.hint { color: var(--text-3); font-weight: 400; margin-left: 4px; text-transform: none; letter-spacing: 0; }
+.form-group--sm { max-width: 160px; }
+
+.error-msg { color: var(--stamp); font-size: 13.5px; margin-top: 8px; }
+
+/* ── Keyword tags ──────────────────────────────────────────────────────────── */
+.keyword-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.keyword-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-mid);
+  border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+/* ── Spinner ───────────────────────────────────────────────────────────────── */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-mid);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+/* ── Mobile ─────────────────────────────────────────────────────────────────── */
+/* iOS zooms the viewport when focusing an input under 16px — bump form controls
+   up so a tap on any field doesn't yank the whole page in. */
+@media (max-width: 600px) {
+  input[type="text"],
+  input[type="search"],
+  input[type="password"],
+  textarea,
+  select { font-size: 16px; }
+  input[list], .input-mono { font-size: 15px; }
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal { max-width: 100%; max-height: 92vh; border-radius: var(--radius-md) var(--radius-md) 0 0; }
+  .form-row--2 { grid-template-columns: 1fr; }
+}

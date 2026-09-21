@@ -1,0 +1,39 @@
+{
+  "name": "memory-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:marketing": "vite build --config vite.marketing.config.js",
+    "dev:marketing": "vite --config vite.marketing.config.js",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "playwright": "^1.60.0",
+    "svelte": "^4.2.19",
+    "vite": "^5.4.0",
+    "vite-plugin-pwa": "^1.3.0"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.2.9",
+    "@fontsource-variable/newsreader": "^5.2.10",
+    "@fontsource/ibm-plex-mono": "^5.2.7",
+    "@milkdown/components": "^7.21.2",
+    "@milkdown/core": "^7.21.2",
+    "@milkdown/plugin-history": "^7.21.2",
+    "@milkdown/plugin-listener": "^7.21.2",
+    "@milkdown/plugin-math": "^7.5.9",
+    "@milkdown/preset-commonmark": "^7.21.2",
+    "@milkdown/preset-gfm": "^7.21.2",
+    "@milkdown/utils": "^7.21.2",
+    "dompurify": "^3.1.7",
+    "katex": "^0.17.0",
+    "marked": "^14.0.0",
+    "marked-katex-extension": "^5.1.10",
+    "mermaid": "^11.16.0",
+    "modern-normalize": "^2.0.0"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "rekam-visual-tests",
+  "private": true,
+  "devDependencies": {
+    "@playwright/test": "1.53.0"
+  }
+}

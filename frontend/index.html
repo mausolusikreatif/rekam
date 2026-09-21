@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>rekam — the catalog of records</title>
+  <meta name="description" content="rekam keeps your team's records in a store you own. Any agent that speaks MCP can read and write them — the one you use today, and the one you switch to.">
+  <meta name="theme-color" content="#f6f2e9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1a15" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="rekam">
+  <link rel="apple-touch-icon" href="/ui/apple-touch-icon.png">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232e4a78'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='600' fill='%23fbf8f1' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
+  <script>
+    // Set the explicit theme (if the reader picked one) before first paint,
+    // so there's no flash of the OS-default theme on load.
+    try {
+      var t = localStorage.getItem('rekam.theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (_) {}
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

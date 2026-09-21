@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f2e9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1c1a15" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232e4a78'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' font-weight='600' fill='%23fbf8f1' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
+  <script>
+    // Apply an explicit theme choice before first paint, so a reader who has
+    // been in the app does not get a flash of the OS default on the way back
+    // out to the marketing site. Same key the app writes.
+    try {
+      var t = localStorage.getItem('rekam.theme');
+      if (t && t !== 'system') document.documentElement.setAttribute('data-theme', t);
+    } catch (_) {}
+  </script>
+  <title>Pricing — rekam</title>
+  <meta name="description" content="Self-host rekam for free, buy a flat licence to run it as a team, or let us host it. Every tier keeps your records exportable.">
+  <link rel="canonical" href="https://rekam.net/pricing">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rekam.net/pricing">
+  <meta property="og:title" content="Pricing — rekam">
+  <meta property="og:description" content="Self-host rekam for free, buy a flat licence to run it as a team, or let us host it. Every tier keeps your records exportable.">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="../src/marketing/pricing.js"></script>
+</body>
+</html>
